@@ -4,20 +4,89 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bloom | Contact</title>
-  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans&display=swap" rel="stylesheet">
   <style>
-    #status {
-      margin-top: 10px;
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.8);
+      padding: 30px 0;
+      text-align: center;
+      border-bottom: 1px solid #e0cfcf;
+    }
+
+    header h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      color: #b94f6f;
+    }
+
+    nav {
+      text-align: center;
+      background: rgba(255, 240, 245, 0.9);
+      padding: 10px;
+    }
+
+    nav a {
+      margin: 0 15px;
+      text-decoration: none;
+      color: #6a1b4d;
       font-weight: bold;
     }
-    #status.sending { color: orange; }
-    #status.success { color: green; }
-    #status.error { color: red; }
+
+    .container {
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.9);
+      max-width: 600px;
+      margin: 40px auto;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .container h2 {
+      font-size: 2rem;
+      color: #9c2c58;
+      margin-bottom: 20px;
+    }
+
+    form input, form textarea, form button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    form button {
+      background: #b94f6f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    form button:hover {
+      background: #9c2c58;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Contact Us</h1>
+    <h1>Bloom</h1>
+    <p>Where Flowers and Soul Meet</p>
   </header>
 
   <nav>
@@ -27,28 +96,23 @@
     <a href="contact.html">Contact</a>
   </nav>
 
-  <section>
-    <h2>Get in Touch</h2>
-    <form id="contactForm" class="contact-form">
+  <div class="container">
+    <h2>Contact Us</h2>
+    <form id="contactForm">
       <input type="text" id="name" placeholder="Your Name" required />
       <input type="email" id="email" placeholder="Your Email" required />
-      <textarea id="message" rows="4" placeholder="Your Message" required></textarea>
+      <textarea id="message" placeholder="Your Message" rows="5" required></textarea>
       <button type="submit">Send Message</button>
     </form>
-    <p id="status"></p>
-  </section>
-
-  <footer>
-    &copy; 2025 Bloom. Made with 💐 and love.
-  </footer>
+    <p id="status"></p> <!-- ✅ Status feedback -->
+  </div>
 
   <!-- Firebase SDK -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // Config with databaseURL ✅
+    // ✅ Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyAQOuXr4rQTpOKAAFWADub-xH_3MgzKG4o",
       authDomain: "bloom-website-e3bcc.firebaseapp.com",
@@ -60,27 +124,21 @@
       measurementId: "G-1T50DM09V4"
     };
 
+    // ✅ Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const db = getDatabase(app);
 
+    const form = document.getElementById("contactForm");
     const statusEl = document.getElementById("status");
 
-    document.getElementById("contactForm").addEventListener("submit", async (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
       const message = document.getElementById("message").value.trim();
 
-      if (!name || !email || !message) {
-        statusEl.textContent = "❌ Please fill all fields.";
-        statusEl.className = "error";
-        return;
-      }
-
       statusEl.textContent = "⏳ Sending...";
-      statusEl.className = "sending";
 
       try {
         await push(ref(db, "contacts"), {
@@ -91,12 +149,10 @@
         });
 
         statusEl.textContent = "✅ Message sent successfully!";
-        statusEl.className = "success";
-        document.getElementById("contactForm").reset();
+        form.reset();
 
       } catch (error) {
         statusEl.textContent = "❌ Error: " + error.message;
-        statusEl.className = "error";
       }
     });
   </script>
